@@ -1,7 +1,7 @@
 #pragma once
 #include "ofMain.h"
 
-const int kMaxTouch = 5;
+const int kMaxTouch = 8;
 
 const int kNumTimeSlices = 256;
 const int kNumBins = 1024;

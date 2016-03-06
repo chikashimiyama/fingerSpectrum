@@ -56,6 +56,10 @@ class ofApp : public ofxAndroidApp,  public PdReceiver{
 	    int recordHead;
 		void print(const std::string& message);
 
+		void glSetup();
+		void audioSetup();
+		void storageSetup();
+
 		void drawTouches();
 		void drawSpectrogram();
 		ofTrueTypeFont myFont;

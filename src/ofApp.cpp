@@ -4,10 +4,42 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	myFont.load("frabk.ttf", kNormalFontSize);
-    ofSetBackgroundColor(0);
-    ofEnableDepthTest();
-    ofSetVerticalSync(true);
-    ofSetCircleResolution(50);
+	glSetup();
+    audioSetup();
+    storageSetup();
+
+}
+void ofApp::glSetup(){
+	ofSetBackgroundColor(0);
+	ofEnableDepthTest();
+	ofSetVerticalSync(true);
+	ofSetCircleResolution(50);
+	ofSetLineWidth(0.1);
+	ofEnableAlphaBlending();
+}
+
+void ofApp::audioSetup(){
+    ofSoundStreamSetup(kNumInput, kNumOutput, this, kSampleRate, ofxPd::blockSize()*8, 3);
+    pd.init(kNumInput, kNumOutput, kSampleRate);
+    pd.subscribe("toOF");
+    pd.addReceiver(*this);
+    pd.openPatch("spectrum.pd");
+    pd.start();
+}
+
+
+
+void ofApp::storageSetup(){
+    for(int u = 0; u < kNumBins;u++){
+        float x = static_cast<float>(u)/static_cast<float>(kNumBins);
+        eqLine3D.push_back(ofVec3f(x, 0, 0));
+		gains.push_back(ofRandom(0, 0.2));
+    }
+
+	for(int i =0;i < kMaxTouch ;i++){
+		touches.push_back(Touch(i,ofToString(i+1), "eq", "freq", "magnitude", "", "", ofColor::white, myFont));
+	}
+
     for(int v = 0; v < kNumTimeSlices; v++){
         for(int u = 0; u < kNumBins;u++){
             float x = static_cast<float>(u)/static_cast<float>(kNumBins);
@@ -15,31 +47,9 @@ void ofApp::setup(){
         }
     }
 
-    for(int u = 0; u < kNumBins;u++){
-        float x = static_cast<float>(u)/static_cast<float>(kNumBins);
-        eqLine3D.push_back(ofVec3f(x, 0, 0));
-    }
-
     spectrumVbo.setVertexData(&spectrogram[0], kNumVertices, GL_DYNAMIC_DRAW);
     eqLineVbo.setVertexData(&eqLine3D[0], kNumBins, GL_DYNAMIC_DRAW);
-    ofSoundStreamSetup(kNumInput, kNumOutput, this, kSampleRate, ofxPd::blockSize()*8, 3);
-    pd.init(kNumInput, kNumOutput, kSampleRate);
-    pd.subscribe("toOF");
-    pd.addReceiver(*this);
-    pd.openPatch("spectrum.pd");
-    pd.start();
-
-    ofSetLineWidth(0.1);
-
-    for(int i = 0; i < kNumBins;i++){
-        gains.push_back(ofRandom(0, 0.2));
-    }
-    ofEnableAlphaBlending();
-    for(int i =0;i < 5;i++){
-    	touches.push_back(Touch(i,ofToString(i+1), "eq", "freq", "magnitude", "", "", ofColor::white, myFont));
-    }
 }
-
 
 void ofApp::print(const std::string& message) {
 	ofLog() << message;
