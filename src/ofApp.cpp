@@ -7,6 +7,7 @@ void ofApp::setup(){
 	glSetup();
     audioSetup();
     storageSetup();
+	ofxAccelerometer.setup();
 
 }
 void ofApp::glSetup(){
@@ -26,8 +27,6 @@ void ofApp::audioSetup(){
     pd.openPatch("spectrum.pd");
     pd.start();
 }
-
-
 
 void ofApp::storageSetup(){
     for(int u = 0; u < kNumBins;u++){
@@ -57,13 +56,15 @@ void ofApp::print(const std::string& message) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    recordHead++;
-    recordHead %= kNumTimeSlices;
+	recordHead++;
+    recordHead %= kNumTimeSlices; // increment + wrap
 
 	ofVec3f accel = ofxAccelerometer.getForce().getNormalized();
 	accel.y *= -1.0;
+
 	std::fill(gains.begin(), gains.end(), 0.0 );
 	for(int i = 0 ;i< kMaxTouch;i++ ){
+		if(touches[i].getStatus()  == TouchStatus::OFF ) continue;
 		touches[i].process(touches[0].getPoint(), pd, accel);
 		const ofPoint point = touches[i].getInterpolatedPoint();
 	    int bin = static_cast<int>(static_cast<float>(point.x) /  ofGetWidth() * static_cast<float>(kNumBins));
