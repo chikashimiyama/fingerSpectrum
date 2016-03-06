@@ -57,6 +57,7 @@ class ofApp : public ofxAndroidApp,  public PdReceiver{
 		void print(const std::string& message);
 
 		void drawTouches();
+		void drawSpectrogram();
 		ofTrueTypeFont myFont;
 
 };

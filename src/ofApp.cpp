@@ -83,10 +83,15 @@ void ofApp::update(){
 
 
 
-//--------------------------------------------------------------
 void ofApp::draw(){
 	drawTouches();
+	drawSpectrogram();
 
+    ofSetColor(ofColor::white);
+    eqLineVbo.draw(GL_LINE_STRIP, 0, kNumBins);
+    ofSetColor(255);
+}
+void ofApp::drawSpectrogram(){
     for (int i = kNumTimeSlices; i >= 0; i--) {
         int offset = (recordHead + i) % kNumTimeSlices;
         float scale = (static_cast<float>(i) / kNumTimeSlices) / 2.0 + 0.5;
@@ -100,10 +105,6 @@ void ofApp::draw(){
         spectrumVbo.draw(GL_LINE_STRIP, offset * kNumBins, kNumBins);
         ofPopMatrix();
     }
-
-    ofSetColor(ofColor::white);
-    eqLineVbo.draw(GL_LINE_STRIP, 0, kNumBins);
-    ofSetColor(255);
 }
 
 void ofApp::drawTouches(){
