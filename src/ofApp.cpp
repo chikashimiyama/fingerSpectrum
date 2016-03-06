@@ -47,6 +47,9 @@ void ofApp::print(const std::string& message) {
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    recordHead++;
+    recordHead %= kNumTimeSlices;
+
 	ofVec3f accel = ofxAccelerometer.getForce().getNormalized();
 	accel.y *= -1.0;
 	std::fill(gains.begin(), gains.end(), 0.0 );
@@ -74,8 +77,7 @@ void ofApp::update(){
 
     spectrumVbo.updateVertexData(&spectrogram[0], kNumVertices);
     eqLineVbo.updateVertexData(&eqLine3D[0], kNumBins);
-    recordHead++;
-    recordHead %= kNumTimeSlices;
+
 }
 
 
